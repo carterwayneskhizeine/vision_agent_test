@@ -1263,11 +1263,12 @@ class MichelsonInterferometerAnalyzer:
         os.makedirs(output_dir, exist_ok=True)
         
         print(f"保存分析截图到: {output_dir}")
+        print(f"📊 数据统计: 老师分析数据 {len(teacher_analysis)} 条, 学生分析数据 {len(student_analysis)} 条")
         
         screenshot_explanations = {}
         
         # 1. 保存老师步骤截图
-        print("保存老师示范步骤截图...")
+        print("\n保存老师示范步骤截图...")
         for i, point in enumerate(teacher_analysis):
             step = point['current_step']
             timestamp = point['timestamp']
@@ -1293,36 +1294,78 @@ class MichelsonInterferometerAnalyzer:
             print(f"  ✅ 保存: {screenshot_name}")
         
         # 2. 保存学生步骤截图
-        print("保存学生操作步骤截图...")
+        print(f"\n保存学生操作步骤截图...")
+        if not student_analysis:
+            print("  ⚠️  警告: 学生分析数据为空，无法保存学生截图")
+        else:
+            print(f"  📝 学生分析数据条数: {len(student_analysis)}")
+            
         for i, point in enumerate(student_analysis):
+            print(f"  正在处理第 {i+1} 条学生数据...")
+            
             step = point['current_step']
             timestamp = point['timestamp']
             
             screenshot_name = f"student_step_{step['step_id']:02d}_t{timestamp}s.png"
             screenshot_path = os.path.join(output_dir, screenshot_name)
             
-            frame_bgr = cv2.cvtColor(point['frame'], cv2.COLOR_RGB2BGR)
-            cv2.imwrite(screenshot_path, frame_bgr)
+            print(f"    - 截图名称: {screenshot_name}")
+            print(f"    - 时间戳: {timestamp}s")
+            print(f"    - 步骤: {step['name']}")
             
-            screenshot_explanations[screenshot_name] = {
-                'type': '学生操作',
-                'step_id': step['step_id'],
-                'step_name': step['name'],
-                'timestamp': timestamp,
-                'time_str': point['time_str'],
-                'description': step['description'],
-                'confidence': step.get('confidence', 0.0),
-                'explanation': f"学生在{timestamp}秒时执行: {step['name']}"
-            }
-            print(f"  ✅ 保存: {screenshot_name}")
+            try:
+                # 检查frame是否存在
+                if 'frame' not in point:
+                    print(f"    ❌ 错误: 数据中缺少 frame 字段")
+                    continue
+                
+                frame = point['frame']
+                if frame is None:
+                    print(f"    ❌ 错误: frame 为 None")
+                    continue
+                
+                print(f"    - 帧尺寸: {frame.shape}")
+                
+                # 转换为BGR保存
+                frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                success = cv2.imwrite(screenshot_path, frame_bgr)
+                
+                if success:
+                    print(f"    ✅ 成功保存: {screenshot_name}")
+                else:
+                    print(f"    ❌ 保存失败: {screenshot_name}")
+                    continue
+                
+                # 保存解释
+                screenshot_explanations[screenshot_name] = {
+                    'type': '学生操作',
+                    'step_id': step['step_id'],
+                    'step_name': step['name'],
+                    'timestamp': timestamp,
+                    'time_str': point['time_str'],
+                    'description': step['description'],
+                    'confidence': step.get('confidence', 0.0),
+                    'explanation': f"学生在{timestamp}秒时执行: {step['name']}"
+                }
+                
+            except Exception as e:
+                print(f"    ❌ 处理学生截图时出错: {e}")
+                import traceback
+                traceback.print_exc()
         
         # 保存解释到JSON文件
         explanations_file = os.path.join(output_dir, 'screenshot_explanations.json')
         with open(explanations_file, 'w', encoding='utf-8') as f:
             json.dump(screenshot_explanations, f, ensure_ascii=False, indent=2)
         
-        print(f"✅ 截图解释已保存到: {explanations_file}")
+        print(f"\n✅ 截图解释已保存到: {explanations_file}")
         print(f"✅ 共保存 {len(screenshot_explanations)} 张截图及解释")
+        
+        # 统计保存的截图
+        teacher_count = len([k for k in screenshot_explanations.keys() if k.startswith('teacher_')])
+        student_count = len([k for k in screenshot_explanations.keys() if k.startswith('student_')])
+        print(f"   - 老师截图: {teacher_count} 张")
+        print(f"   - 学生截图: {student_count} 张")
         
         return screenshot_explanations
 
