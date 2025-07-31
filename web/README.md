@@ -41,20 +41,41 @@ pip install -r requirements.txt
 python test_analyzer.py
 ```
 
-### 3. 使用真实视频
+### 3. 使用真实视频 🎯 **推荐**
+```bash
+# 准备文件：student.mp4, part1.png-part6.png
+# 快速检测模式（提取1分53秒的帧进行设备检测）
+python quick_detection.py
+
+# 或者运行完整程序
+python experiment_analyzer_prototype.py
+```
+
+程序会自动提取student.mp4在1分53秒的帧进行设备检测，避免最后一帧被手挡住！
+
+### 4. 测试和调试工具 🔧
+```bash
+# 测试中文显示效果
+python test_chinese_display.py
+
+# 比较两种检测方法的结果
+python compare_detection_methods.py
+```
+
+### 5. 编程方式使用
 ```python
 from experiment_analyzer_prototype import MichelsonInterferometerAnalyzer
 
 # 初始化分析器
 analyzer = MichelsonInterferometerAnalyzer()
 
-# 分析学生视频
+# 分析学生视频（现在使用真实检测）
 student_analysis = analyzer.analyze_video('student.mp4', 'student')
 
 # 对比分析
 comparison_results = analyzer.compare_student_with_teacher(student_analysis)
 
-# 保存结果
+# 保存结果（带设备检测可视化）
 analyzer.save_analysis_screenshots(comparison_results)
 report = analyzer.generate_analysis_report(student_analysis, comparison_results)
 ```
@@ -64,6 +85,7 @@ report = analyzer.generate_analysis_report(student_analysis, comparison_results)
 ### 📸 截图文件
 - `analysis_output/issue_XX_tXXs.png` - 问题截图
 - `analysis_output/correct_XX_tXXs.png` - 正确示例截图
+- `real_video_analysis/` - 真实视频分析截图（带设备检测框）
 
 ### 📋 分析报告
 - `analysis_report.json` - 详细的JSON格式报告
@@ -107,10 +129,12 @@ report = analyzer.generate_analysis_report(student_analysis, comparison_results)
 - **identify_experiment_step()**: 步骤识别
 - **compare_student_with_teacher()**: 对比分析
 
-### 🔧 待改进的部分
-1. **设备检测**: 目前使用模拟数据，需要集成 `imagetest_batch.py` 的真实检测功能
-2. **步骤识别**: 基于更复杂的视觉特征而非仅依赖时间
-3. **准确性**: 增加更多的判断条件和置信度计算
+### 🔧 最新更新 ✅
+1. **真实设备检测**: 已集成 `imagetest_batch.py` 的完整检测算法！
+2. **多尺度匹配**: 支持不同尺度的鲁棒设备检测
+3. **特征点检测**: 使用 SIFT/ORB 进行更准确的匹配
+4. **可视化增强**: 截图上显示检测到的设备边界框和置信度
+5. **智能文件检查**: 自动验证必需文件并给出友好提示
 
 ## 开发路线图
 
@@ -120,17 +144,20 @@ report = analyzer.generate_analysis_report(student_analysis, comparison_results)
 - [x] 简单的对比分析功能
 - [x] 报告生成和可视化
 
-### 🎯 第二阶段（计划中）
-- [ ] 集成真实的设备检测算法
-- [ ] 改进步骤识别的准确性
-- [ ] 添加手部动作识别
-- [ ] 优化性能和内存使用
+### 🎯 第二阶段（已完成 ✅）
+- [x] 集成真实的设备检测算法
+- [x] 改进检测的准确性和鲁棒性  
+- [x] 增强可视化和报告功能
+- [x] 优化用户体验和错误处理
 
-### 🌟 第三阶段（未来）
+### 🌟 第三阶段（下一步）
 - [ ] Web界面开发（Vite + FastAPI）
 - [ ] 视频上传和在线预览
-- [ ] 实时分析进度显示
+- [ ] 实时分析进度显示  
 - [ ] 交互式分析报告
+- [ ] 手部动作识别
+- [ ] 多实验类型支持
+- [ ] 云端部署和扩展
 
 ## 示例输出
 
