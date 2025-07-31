@@ -1,0 +1,33 @@
+{
+  "analysis_time": "2025-07-31 14:40:40",
+  "student_video": "student.mp4",
+  "total_frames_analyzed": 8,
+  "steps_completion": {
+    "expected_steps": 6,
+    "detected_steps": 7,
+    "completion_rate": 1.1666666666666667
+  },
+  "accuracy_assessment": {
+    "total_comparisons": 8,
+    "correct_steps": 7,
+    "incorrect_steps": 1,
+    "accuracy_rate": 0.875
+  },
+  "issues_summary": [
+    {
+      "timestamp": 0,
+      "issue_type": "时间偏差",
+      "description": "时间点 0s 没有对应的标准步骤",
+      "expected_step": "None",
+      "detected_step": "未识别步骤",
+      "confidence": 0.3
+    }
+  ],
+  "recommendations": [
+    "总体表现良好，实验步骤基本正确",
+    "建议控制好每个步骤的时间，避免过快或过慢",
+    "建议观看教师示范视频，注意关键操作细节",
+    "重点关注设备的正确使用方法",
+    "实验过程中要仔细观察干涉条纹的变化"
+  ]
+}
