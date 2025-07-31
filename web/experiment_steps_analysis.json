@@ -1,0 +1,303 @@
+{
+  "analysis_time": "2025-07-31 20:53:08",
+  "analysis_type": "实验步骤AI分析（老师示范 + 学生操作）",
+  "videos_analyzed": {
+    "teacher_video": "teacher.mp4",
+    "student_video": "student.mp4"
+  },
+  "teacher_analysis": {
+    "video_type": "老师示范",
+    "total_steps_identified": 6,
+    "analysis_summary": "LGS-7A精密干涉仪实验步骤 - 老师示范",
+    "steps": [
+      {
+        "step_id": 1,
+        "step_name": "迈克尔逊干涉仪初始设置",
+        "timestamp": 5,
+        "time_str": "00:05",
+        "description": [
+          "安装氦氖激光器",
+          "确保架间隙均匀",
+          "准备光学元件"
+        ],
+        "formatted_output": "## 步骤1：迈克尔逊干涉仪初始设置 (t=5s)"
+      },
+      {
+        "step_id": 1,
+        "step_name": "迈克尔逊干涉仪初始设置",
+        "timestamp": 25,
+        "time_str": "00:25",
+        "description": [
+          "安装氦氖激光器",
+          "确保架间隙均匀",
+          "准备光学元件"
+        ],
+        "formatted_output": "## 步骤1：迈克尔逊干涉仪初始设置 (t=25s)"
+      },
+      {
+        "step_id": 2,
+        "step_name": "激光器对准和调节",
+        "timestamp": 45,
+        "time_str": "00:45",
+        "description": [
+          "调节激光器位置",
+          "调节光束通过分束器",
+          "使光点重合"
+        ],
+        "formatted_output": "## 步骤2：激光器对准和调节 (t=45s)"
+      },
+      {
+        "step_id": 3,
+        "step_name": "获得干涉条纹",
+        "timestamp": 65,
+        "time_str": "01:05",
+        "description": [
+          "加入扩束器",
+          "调节动镜手钮",
+          "获得干涉条纹"
+        ],
+        "formatted_output": "## 步骤3：获得干涉条纹 (t=65s)"
+      },
+      {
+        "step_id": 4,
+        "step_name": "观察等倾干涉图",
+        "timestamp": 80,
+        "time_str": "01:20",
+        "description": [
+          "转动精密测微头",
+          "调节测微头",
+          "观察圆形干涉环"
+        ],
+        "formatted_output": "## 步骤4：观察等倾干涉图 (t=80s)"
+      },
+      {
+        "step_id": 5,
+        "step_name": "精密测量过程",
+        "timestamp": 100,
+        "time_str": "01:40",
+        "description": [
+          "记录测微头读数",
+          "旋转测微螺旋",
+          "计数干涉环变化"
+        ],
+        "formatted_output": "## 步骤5：精密测量过程 (t=100s)"
+      }
+    ]
+  },
+  "student_analysis": {
+    "video_type": "学生操作",
+    "total_steps_identified": 5,
+    "analysis_summary": "LGS-7A精密干涉仪实验步骤 - 学生操作",
+    "steps": [
+      {
+        "step_id": 1,
+        "step_name": "迈克尔逊干涉仪初始设置",
+        "timestamp": 0,
+        "time_str": "00:00",
+        "description": [
+          "准备和检查设备",
+          "调整基础配置"
+        ],
+        "confidence": 0.7,
+        "formatted_output": "## 步骤1：迈克尔逊干涉仪初始设置 (t=0s)"
+      },
+      {
+        "step_id": 2,
+        "step_name": "激光器对准和调节",
+        "timestamp": 30,
+        "time_str": "00:30",
+        "description": [
+          "调节激光器位置",
+          "对准光路"
+        ],
+        "confidence": 0.7,
+        "formatted_output": "## 步骤2：激光器对准和调节 (t=30s)"
+      },
+      {
+        "step_id": 3,
+        "step_name": "获得干涉条纹",
+        "timestamp": 60,
+        "time_str": "01:00",
+        "description": [
+          "加入扩束器",
+          "调节获得干涉条纹"
+        ],
+        "confidence": 0.7,
+        "formatted_output": "## 步骤3：获得干涉条纹 (t=60s)"
+      },
+      {
+        "step_id": 4,
+        "step_name": "观察等倾干涉图",
+        "timestamp": 90,
+        "time_str": "01:30",
+        "description": [
+          "调节测微头",
+          "观察干涉环"
+        ],
+        "confidence": 0.7,
+        "formatted_output": "## 步骤4：观察等倾干涉图 (t=90s)"
+      },
+      {
+        "step_id": 4,
+        "step_name": "观察等倾干涉图",
+        "timestamp": 109,
+        "time_str": "01:49",
+        "description": [
+          "调节测微头",
+          "观察干涉环"
+        ],
+        "confidence": 0.7,
+        "formatted_output": "## 步骤4：观察等倾干涉图 (t=109s)"
+      }
+    ]
+  },
+  "screenshot_explanations": {
+    "teacher_step_01_t5s.png": {
+      "type": "老师示范",
+      "step_id": 1,
+      "step_name": "迈克尔逊干涉仪初始设置",
+      "timestamp": 5,
+      "time_str": "00:05",
+      "description": [
+        "安装氦氖激光器",
+        "确保架间隙均匀",
+        "准备光学元件"
+      ],
+      "explanation": "老师在5秒时执行: 迈克尔逊干涉仪初始设置"
+    },
+    "teacher_step_01_t25s.png": {
+      "type": "老师示范",
+      "step_id": 1,
+      "step_name": "迈克尔逊干涉仪初始设置",
+      "timestamp": 25,
+      "time_str": "00:25",
+      "description": [
+        "安装氦氖激光器",
+        "确保架间隙均匀",
+        "准备光学元件"
+      ],
+      "explanation": "老师在25秒时执行: 迈克尔逊干涉仪初始设置"
+    },
+    "teacher_step_02_t45s.png": {
+      "type": "老师示范",
+      "step_id": 2,
+      "step_name": "激光器对准和调节",
+      "timestamp": 45,
+      "time_str": "00:45",
+      "description": [
+        "调节激光器位置",
+        "调节光束通过分束器",
+        "使光点重合"
+      ],
+      "explanation": "老师在45秒时执行: 激光器对准和调节"
+    },
+    "teacher_step_03_t65s.png": {
+      "type": "老师示范",
+      "step_id": 3,
+      "step_name": "获得干涉条纹",
+      "timestamp": 65,
+      "time_str": "01:05",
+      "description": [
+        "加入扩束器",
+        "调节动镜手钮",
+        "获得干涉条纹"
+      ],
+      "explanation": "老师在65秒时执行: 获得干涉条纹"
+    },
+    "teacher_step_04_t80s.png": {
+      "type": "老师示范",
+      "step_id": 4,
+      "step_name": "观察等倾干涉图",
+      "timestamp": 80,
+      "time_str": "01:20",
+      "description": [
+        "转动精密测微头",
+        "调节测微头",
+        "观察圆形干涉环"
+      ],
+      "explanation": "老师在80秒时执行: 观察等倾干涉图"
+    },
+    "teacher_step_05_t100s.png": {
+      "type": "老师示范",
+      "step_id": 5,
+      "step_name": "精密测量过程",
+      "timestamp": 100,
+      "time_str": "01:40",
+      "description": [
+        "记录测微头读数",
+        "旋转测微螺旋",
+        "计数干涉环变化"
+      ],
+      "explanation": "老师在100秒时执行: 精密测量过程"
+    },
+    "student_step_01_t0s.png": {
+      "type": "学生操作",
+      "step_id": 1,
+      "step_name": "迈克尔逊干涉仪初始设置",
+      "timestamp": 0,
+      "time_str": "00:00",
+      "description": [
+        "准备和检查设备",
+        "调整基础配置"
+      ],
+      "confidence": 0.7,
+      "explanation": "学生在0秒时执行: 迈克尔逊干涉仪初始设置"
+    },
+    "student_step_02_t30s.png": {
+      "type": "学生操作",
+      "step_id": 2,
+      "step_name": "激光器对准和调节",
+      "timestamp": 30,
+      "time_str": "00:30",
+      "description": [
+        "调节激光器位置",
+        "对准光路"
+      ],
+      "confidence": 0.7,
+      "explanation": "学生在30秒时执行: 激光器对准和调节"
+    },
+    "student_step_03_t60s.png": {
+      "type": "学生操作",
+      "step_id": 3,
+      "step_name": "获得干涉条纹",
+      "timestamp": 60,
+      "time_str": "01:00",
+      "description": [
+        "加入扩束器",
+        "调节获得干涉条纹"
+      ],
+      "confidence": 0.7,
+      "explanation": "学生在60秒时执行: 获得干涉条纹"
+    },
+    "student_step_04_t90s.png": {
+      "type": "学生操作",
+      "step_id": 4,
+      "step_name": "观察等倾干涉图",
+      "timestamp": 90,
+      "time_str": "01:30",
+      "description": [
+        "调节测微头",
+        "观察干涉环"
+      ],
+      "confidence": 0.7,
+      "explanation": "学生在90秒时执行: 观察等倾干涉图"
+    },
+    "student_step_04_t109s.png": {
+      "type": "学生操作",
+      "step_id": 4,
+      "step_name": "观察等倾干涉图",
+      "timestamp": 109,
+      "time_str": "01:49",
+      "description": [
+        "调节测微头",
+        "观察干涉环"
+      ],
+      "confidence": 0.7,
+      "explanation": "学生在109秒时执行: 观察等倾干涉图"
+    }
+  },
+  "output_format_example": {
+    "description": "输出格式按照用户要求，分别展示老师示范和学生操作的实验步骤",
+    "format": "LGS-7A精密干涉仪实验步骤格式，包含步骤编号、名称、时间戳和关键操作描述"
+  }
+}

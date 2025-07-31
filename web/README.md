@@ -43,15 +43,22 @@ python test_analyzer.py
 
 ### 3. 使用真实视频 🎯 **推荐**
 ```bash
-# 准备文件：student.mp4, part1.png-part6.png
-# 快速检测模式（提取1分53秒的帧进行设备检测）
-python quick_detection.py
-
-# 或者运行完整程序
+# 智能分析模式（自动选择最佳分析方式）
 python experiment_analyzer_prototype.py
+
+# 专用学生操作AI视频分析
+python student_operation_analysis.py
+
+# 快速设备检测模式（提取1分48秒的帧进行设备检测）
+python quick_detection.py
 ```
 
-程序会自动提取student.mp4在1分53秒的帧进行设备检测，避免最后一帧被手挡住！
+🎯 **三种分析模式:**
+- **🏆 完整分析**: teacher.mp4 + student.mp4 + part1-6.png （AI步骤分析 + 108秒设备检测）
+- **📊 步骤分析**: teacher.mp4 + student.mp4 （分别分析老师和学生的实验步骤）
+- **🔬 设备检测**: student.mp4 + part1-6.png （检测108秒帧中的实验设备）
+
+程序会自动检测文件并选择最佳分析模式！
 
 ### 4. 测试和调试工具 🔧
 ```bash
