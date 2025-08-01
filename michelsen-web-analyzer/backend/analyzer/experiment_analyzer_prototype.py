@@ -31,8 +31,8 @@ class MichelsonInterferometerAnalyzer:
             {
                 "step_id": 1,
                 "name": "迈克尔逊干涉仪初始设置",
-                "start_time": 5,
-                "duration": 20,
+                "start_time": 0,
+                "duration": 40,
                 "key_actions": ["安装氦氖激光器", "确保架间隙均匀", "准备光学元件"],
                 "required_equipment": ["氦氖激光器"],
                 "success_criteria": ["激光器正确安装", "框架水平稳定"]
@@ -40,8 +40,8 @@ class MichelsonInterferometerAnalyzer:
             {
                 "step_id": 2,
                 "name": "激光器对准和调节",
-                "start_time": 25,
-                "duration": 20,
+                "start_time": 45,
+                "duration": 40,
                 "key_actions": ["调节激光器位置", "调节光束通过分束器", "使光点重合"],
                 "required_equipment": ["氦氖激光器", "分束器和补偿板"],
                 "success_criteria": ["光束对准", "两个光点重合"]
@@ -49,7 +49,7 @@ class MichelsonInterferometerAnalyzer:
             {
                 "step_id": 3,
                 "name": "获得干涉条纹",
-                "start_time": 45,
+                "start_time": 90,
                 "duration": 20,
                 "key_actions": ["加入扩束器", "调节动镜手钮", "获得干涉条纹"],
                 "required_equipment": ["扩束器", "动镜"],
@@ -58,8 +58,8 @@ class MichelsonInterferometerAnalyzer:
             {
                 "step_id": 4,
                 "name": "观察等倾干涉图",
-                "start_time": 65,
-                "duration": 15,
+                "start_time": 105,
+                "duration": 10,
                 "key_actions": ["转动精密测微头", "调节测微头", "观察圆形干涉环"],
                 "required_equipment": ["精密测微头"],
                 "success_criteria": ["出现圆形干涉环", "环心在屏中央"]
@@ -67,20 +67,11 @@ class MichelsonInterferometerAnalyzer:
             {
                 "step_id": 5,
                 "name": "精密测量过程",
-                "start_time": 80,
-                "duration": 20,
+                "start_time": 112,
+                "duration": 3,
                 "key_actions": ["记录测微头读数", "旋转测微螺旋", "计数干涉环变化"],
                 "required_equipment": ["精密测微头"],
                 "success_criteria": ["准确记录读数", "正确计数环数"]
-            },
-            {
-                "step_id": 6,
-                "name": "法布里-珀罗干涉设置",
-                "start_time": 100,
-                "duration": 15,
-                "key_actions": ["取下分束器和补偿板", "安装镀膜面", "调节镜面间隙"],
-                "required_equipment": ["定镜", "动镜"],
-                "success_criteria": ["正确移除部件", "镜面间隙合适"]
             }
         ]
         
@@ -1563,7 +1554,7 @@ def analyze_student_operation_full():
         print("步骤 1: AI分析老师示范视频的实验步骤")
         print("="*80)
         
-        teacher_analysis = analyzer.analyze_video_steps('teacher.mp4', 'teacher', interval=30)
+        teacher_analysis = analyzer.analyze_video_steps('teacher.mp4', 'teacher', interval=18)
         
         print(f"\n🎓 老师示范实验步骤分析结果:")
         print("="*60)
@@ -1574,7 +1565,7 @@ def analyze_student_operation_full():
         print("步骤 2: AI分析学生实验视频的操作步骤")
         print("="*80)
         
-        student_analysis = analyzer.analyze_video_steps('student.mp4', 'student', interval=30)
+        student_analysis = analyzer.analyze_video_steps('student.mp4', 'student', interval=22)
         
         print(f"\n🎓 学生实验操作步骤分析结果:")
         print("="*60)
