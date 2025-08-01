@@ -78,7 +78,7 @@ python compare_detection_methods.py
 ### 📊 报告示例
 ```json
 {
-  "analysis_time": "2024-01-15 14:30:25",
+  "analysis_time": "2025-08-01 14:30:25",
   "source_video": "student.mp4",
   "target_image": "Identify_target.png", 
   "total_components_to_detect": 7,

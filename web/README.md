@@ -102,7 +102,7 @@ report = analyzer.generate_analysis_report(student_analysis, comparison_results)
 ```
 迈克尔逊干涉实验AI分析报告
 ============================================================
-分析时间: 2024-01-15 14:30:25
+分析时间: 2025-08-01 14:30:25
 学生视频: student.mp4
 分析帧数: 8
 

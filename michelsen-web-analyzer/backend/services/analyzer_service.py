@@ -298,7 +298,7 @@ class AnalyzerService:
     def _get_error_result(self, error_message: str) -> Dict[str, Any]:
         """获取错误结果"""
         return {
-            'analysis_time': '2024-01-01 12:00:00',
+            'analysis_time': '2025-08-01 12:00:00',
             'analysis_type': '实验步骤AI分析（老师示范 + 学生操作）',
             'videos_analyzed': {
                 'teacher_video': 'teacher.mp4',

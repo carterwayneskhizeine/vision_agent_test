@@ -106,7 +106,7 @@ step_analysis_output/
 ### 📊 分析报告示例
 ```json
 {
-  "analysis_time": "2024-01-15 15:30:25",
+  "analysis_time": "2025-08-01 15:30:25",
   "analysis_type": "实验步骤AI分析（老师示范 + 学生操作）",
   "videos_analyzed": {
     "teacher_video": "teacher.mp4",

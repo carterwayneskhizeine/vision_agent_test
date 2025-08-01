@@ -40,7 +40,7 @@
     <!-- 底部 -->
     <footer class="footer footer-center p-4 bg-base-300 text-base-content">
       <div>
-        <p>© 2024 迈克尔逊干涉实验 AI 分析系统. 基于 AI 技术的实验教学分析工具.</p>
+        <p>© 2025 迈克尔逊干涉实验 AI 分析系统. 基于 AI 技术的实验教学分析工具.</p>
       </div>
     </footer>
   </div>
