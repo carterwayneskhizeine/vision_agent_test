@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 自定义样式 */
+.video-preview {
+  @apply border-2 border-base-300 rounded-lg overflow-hidden;
+}
+
+.step-card {
+  @apply card bg-base-100 shadow-xl mb-6;
+}
+
+.screenshot-container {
+  @apply flex justify-center p-4;
+}
+
+.step-screenshot {
+  @apply max-w-full h-auto rounded-lg shadow-md hover:shadow-lg 
+         transition-shadow duration-300 cursor-pointer;
+}
+
+.confidence-badge {
+  @apply badge badge-sm ml-2;
+}
+
+.confidence-badge.high {
+  @apply badge-success;
+}
+
+.confidence-badge.medium {
+  @apply badge-warning;
+}
+
+.confidence-badge.low {
+  @apply badge-error;
+}
+
+.analysis-progress {
+  @apply mb-4;
+}
+
+.upload-card {
+  @apply card bg-base-100 shadow-lg mb-6;
+}

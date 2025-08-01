@@ -3,3 +3,5 @@ web/detection_report.json
 web/Identify_target.png
 web/step_analysis_output
 web/experiment_steps_analysis.json
+
+michelsen-web-analyzer/frontend/node_modules
