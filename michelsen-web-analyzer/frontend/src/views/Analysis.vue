@@ -102,6 +102,30 @@
           🎓 学生操作步驤分析
         </h2>
         
+        <!-- 设备检测结果图片 -->
+        <div v-if="detectionImageUrl" class="card bg-base-100 shadow-xl mb-6">
+          <div class="card-body">
+            <h3 class="card-title text-accent mb-4">
+              🔍 学生实验设备检测结果 (108秒)
+            </h3>
+            <div class="screenshot-container">
+              <img 
+                :src="detectionImageUrl"
+                alt="学生实验设备检测结果"
+                class="step-screenshot cursor-pointer"
+                @click="openImageModal(detectionImageUrl, '学生实验设备检测结果 (108秒)')"
+                @error="handleImageError"
+              />
+            </div>
+            <div class="mt-3 p-3 bg-accent/10 rounded-lg">
+              <p class="text-sm">
+                <strong class="text-accent">AI设备检测：</strong>
+                {{ detectionResults ? `成功检测到 ${detectionResults.components_detected}/${detectionResults.total_components_to_detect} 个实验设备` : '正在加载设备检测结果...' }}
+              </p>
+            </div>
+          </div>
+        </div>
+        
         <div v-for="step in studentSteps" :key="`student-${step.step_id}-${step.timestamp}`" class="step-card">
           <div class="card-body">
             <h3 class="card-title text-lg">
@@ -410,9 +434,9 @@ const loadAnalysisResults = async () => {
         
         // 检查设备检测图片是否存在
         try {
-          const imageResponse = await fetch('/api/analysis/images/detection_result.png', { method: 'HEAD' })
+          const imageResponse = await fetch('http://localhost:8000/static/images/detection_result.png', { method: 'HEAD' })
           if (imageResponse.ok) {
-            detectionImageUrl.value = '/api/analysis/images/detection_result.png'
+            detectionImageUrl.value = 'http://localhost:8000/static/images/detection_result.png'
           }
         } catch (imageError) {
           console.log('设备检测图片不存在')

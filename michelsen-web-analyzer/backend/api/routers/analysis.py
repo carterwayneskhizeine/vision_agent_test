@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse
 from pathlib import Path
 import json
 import uuid
+import os
 from typing import Dict, Any, Optional
 import asyncio
 
@@ -52,10 +53,13 @@ async def start_analysis(background_tasks: BackgroundTasks, include_device_detec
 async def run_analysis(analysis_id: str, include_device_detection: bool):
     """异步执行分析任务"""
     try:
-        # 初始化分析服务
+        # 初始化分析服务（确保使用绝对路径）
+        upload_dir = os.path.abspath(str(settings.upload_dir))
+        static_dir = os.path.abspath(str(settings.static_dir))
+        
         service = AnalyzerService(
-            upload_dir=str(settings.upload_dir),
-            static_dir=str(settings.static_dir)
+            upload_dir=upload_dir,
+            static_dir=static_dir
         )
         
         # 获取上传的文件路径

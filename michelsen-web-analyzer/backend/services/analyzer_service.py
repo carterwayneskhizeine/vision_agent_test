@@ -125,20 +125,28 @@ class AnalyzerService:
                 'experiment_steps_analysis.json'
             )
             
-            # 检查是否有part文件，如果有则执行设备检测
-            has_part_files = any(os.path.exists(f'part{i}.png') for i in range(1, 7))
+            # 5. 先复制part文件到上传目录
+            await self._copy_part_files()
+            
+            # 检查上传目录是否有part文件，如果有则执行设备检测
+            upload_part_files = [os.path.join(self.upload_dir, f'part{i}.png') for i in range(1, 7)]
+            has_part_files = any(os.path.exists(part_file) for part_file in upload_part_files)
+            
+            print(f"检查设备检测文件: {has_part_files}")
+            
             if has_part_files:
                 if progress_callback:
                     progress_callback("执行设备检测...")
                 
-                # 5. 复制part文件到上传目录（如果还没有的话）
-                await self._copy_part_files()
+                print("开始执行108秒设备检测...")
                 
                 # 6. 执行单帧设备检测（基于108秒）
                 from experiment_analyzer_prototype import extract_frame_at_time
                 
                 # 提取108秒的帧
-                target_frame = extract_frame_at_time('student.mp4', time_seconds=108.0, output_path='Identify_target.png')
+                identify_target_path = os.path.join(self.upload_dir, 'Identify_target.png')
+                target_frame = extract_frame_at_time('student.mp4', time_seconds=108.0, output_path=identify_target_path)
+                print(f"✅ 目标帧已保存: {identify_target_path}")
                 
                 # 转换为RGB格式用于分析
                 import cv2
@@ -146,14 +154,17 @@ class AnalyzerService:
                 
                 # 执行设备检测
                 equipment_detections = self.analyzer.detect_equipment_in_frame(target_frame_rgb, min_confidence=0.25)
+                print(f"设备检测完成，检测到 {len(equipment_detections) if equipment_detections else 0} 个设备")
                 
                 if equipment_detections:
                     # 在原图上绘制检测结果
                     annotated_frame = self.analyzer.draw_detections_on_frame(target_frame_rgb, equipment_detections)
                     
-                    # 保存标注后的图片
+                    # 保存标注后的图片到上传目录
                     annotated_bgr = cv2.cvtColor(annotated_frame, cv2.COLOR_RGB2BGR)
-                    cv2.imwrite('detection_result.png', annotated_bgr)
+                    detection_result_path = os.path.join(self.upload_dir, 'detection_result.png')
+                    cv2.imwrite(detection_result_path, annotated_bgr)
+                    print(f"✅ 设备检测结果图片已保存: {detection_result_path}")
                     
                     # 生成设备检测报告
                     detection_report = {
@@ -174,11 +185,17 @@ class AnalyzerService:
                         ]
                     }
                     
-                    with open('detection_report.json', 'w', encoding='utf-8') as f:
+                    detection_report_path = os.path.join(self.upload_dir, 'detection_report.json')
+                    with open(detection_report_path, 'w', encoding='utf-8') as f:
                         json.dump(detection_report, f, ensure_ascii=False, indent=2)
+                    print(f"✅ 设备检测报告已保存: {detection_report_path}")
                     
                     # 将设备检测结果添加到主报告中
                     analysis_report['equipment_detection'] = detection_report
+                else:
+                    print("❌ 未检测到任何设备，跳过检测结果保存")
+            else:
+                print("❌ 未找到part文件，跳过设备检测")
             
             return analysis_report
             
@@ -188,18 +205,35 @@ class AnalyzerService:
     
     async def _copy_part_files(self):
         """复制part文件到上传目录"""
-        # 检查是否需要从web目录复制part文件
-        web_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(self.upload_dir))), 'web')
+        # 确保上传目录存在
+        os.makedirs(self.upload_dir, exist_ok=True)
+        
+        # 获取项目根目录（从backend目录向上两级）
+        backend_dir = os.path.dirname(os.path.dirname(__file__))  # 从services目录向上到backend
+        project_root = os.path.dirname(os.path.dirname(backend_dir))  # 从backend向上到项目根目录
+        web_dir = os.path.join(project_root, 'web')
+        
+        print(f"从 {web_dir} 复制part文件到 {self.upload_dir}")
+        print(f"上传目录绝对路径: {os.path.abspath(self.upload_dir)}")
         
         for i in range(1, 8):  # part1.png to part7.png
             part_file = f'part{i}.png'
             upload_part_path = os.path.join(self.upload_dir, part_file)
             web_part_path = os.path.join(web_dir, part_file)
             
+            print(f"检查文件: {web_part_path} -> {upload_part_path}")
+            
             # 如果上传目录没有这个文件，但web目录有，则复制过来
             if not os.path.exists(upload_part_path) and os.path.exists(web_part_path):
-                shutil.copy2(web_part_path, upload_part_path)
-                print(f"复制了 {part_file} 到上传目录")
+                try:
+                    shutil.copy2(web_part_path, upload_part_path)
+                    print(f"✅ 复制了 {part_file} 到上传目录")
+                except Exception as e:
+                    print(f"❌ 复制文件失败 {part_file}: {e}")
+            elif os.path.exists(upload_part_path):
+                print(f"📁 {part_file} 已存在于上传目录")
+            else:
+                print(f"❌ 源文件不存在: {web_part_path}")
     
     async def _move_results_to_static(self):
         """移动生成的结果文件到静态文件目录"""
