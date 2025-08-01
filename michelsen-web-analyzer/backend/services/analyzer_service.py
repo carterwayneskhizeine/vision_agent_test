@@ -1,254 +1,288 @@
-import asyncio
+"""
+AI分析服务类
+封装实验分析核心逻辑
+"""
+
+import os
 import json
 import shutil
-from pathlib import Path
-from typing import Dict, Any, Callable, Optional
-import os
+import asyncio  
 import sys
+from typing import Dict, Any, Optional, Callable
 
-# 添加分析器代码路径
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'analyzer'))
+# 添加analyzer路径到sys.path
+analyzer_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'analyzer')
+if analyzer_path not in sys.path:
+    sys.path.insert(0, analyzer_path)
 
-from core.config import settings
+from experiment_analyzer_prototype import MichelsonInterferometerAnalyzer
 
-class ExperimentAnalysisService:
-    """实验分析服务类"""
+class AnalyzerService:
+    """实验分析服务"""
     
-    def __init__(self):
-        self.screenshots_dir = Path(settings.screenshots_dir)
-        self.videos_dir = Path(settings.videos_dir)
-        
-        # 确保目录存在
-        self.screenshots_dir.mkdir(parents=True, exist_ok=True)
-        self.videos_dir.mkdir(parents=True, exist_ok=True)
+    def __init__(self, upload_dir: str, static_dir: str):
+        self.upload_dir = upload_dir
+        self.static_dir = static_dir
+        self.analyzer = MichelsonInterferometerAnalyzer()
     
-    async def analyze_experiment(
+    async def analyze_videos(
         self, 
-        teacher_path: str, 
-        student_path: str, 
-        include_device_detection: bool = True,
-        progress_callback: Optional[Callable[[str, int], None]] = None
+        teacher_video_path: str, 
+        student_video_path: str,
+        progress_callback: Optional[Callable[[str], None]] = None
     ) -> Dict[str, Any]:
         """
-        执行实验分析
+        分析老师和学生视频
         
         Args:
-            teacher_path: 老师视频路径
-            student_path: 学生视频路径  
-            include_device_detection: 是否包含设备检测
+            teacher_video_path: 老师视频文件路径
+            student_video_path: 学生视频文件路径
             progress_callback: 进度回调函数
             
         Returns:
             分析结果字典
         """
         
+        if progress_callback:
+            progress_callback("开始AI分析...")
+        
         try:
-            # 步驤 1: 准备分析环境
-            if progress_callback:
-                await progress_callback("正在准备分析环境...", 10)
-            
-            # 复制视频文件到工作目录
-            work_dir = Path("work_temp")
-            work_dir.mkdir(exist_ok=True)
-            
-            teacher_work_path = work_dir / "teacher.mp4"
-            student_work_path = work_dir / "student.mp4"
-            
-            shutil.copy2(teacher_path, teacher_work_path)
-            shutil.copy2(student_path, student_work_path)
-            
-            # 步驤 2: 执行 AI 分析
-            if progress_callback:
-                await progress_callback("正在执行 AI 视频分析...", 30)
-            
-            # TODO: 这里将集成现有的 Python 分析代码
-            # 暂时返回模拟结果
-            analysis_result = await self._run_legacy_analyzer(
-                str(teacher_work_path), 
-                str(student_work_path),
-                include_device_detection,
+            # 调用完整的分析逻辑
+            result = await self._run_full_analyzer(
+                teacher_video_path, 
+                student_video_path, 
                 progress_callback
             )
             
-            # 步驤 3: 处理结果和截图
-            if progress_callback:
-                await progress_callback("正在处理分析结果...", 80)
-            
-            # 移动截图到静态文件目录
-            await self._move_screenshots_to_static(work_dir)
-            
-            # 清理临时文件
-            if work_dir.exists():
-                shutil.rmtree(work_dir)
+            # 移动生成的截图和文件到静态目录
+            await self._move_results_to_static()
             
             if progress_callback:
-                await progress_callback("分析完成!", 100)
-            
-            return analysis_result
+                progress_callback("分析完成")
+                
+            return result
             
         except Exception as e:
-            # 清理临时文件
-            work_dir = Path("work_temp")
-            if work_dir.exists():
-                shutil.rmtree(work_dir)
-            raise e
+            print(f"分析过程中出现错误: {e}")
+            import traceback
+            traceback.print_exc()
+            
+            if progress_callback:
+                progress_callback(f"分析失败: {str(e)}")
+            
+            # 返回错误结果
+            return self._get_error_result(str(e))
     
-    async def _run_legacy_analyzer(
+    async def _run_full_analyzer(
         self, 
         teacher_path: str, 
-        student_path: str, 
-        include_device_detection: bool,
-        progress_callback: Optional[Callable[[str, int], None]] = None
+        student_path: str,
+        progress_callback: Optional[Callable[[str], None]] = None
     ) -> Dict[str, Any]:
-        """运行现有的分析代码"""
+        """运行完整的分析逻辑（基于原始experiment_analyzer_prototype.py）"""
+        
+        # 设置工作目录为上传目录
+        original_cwd = os.getcwd()
+        os.chdir(self.upload_dir)
         
         try:
-            # 导入分析器
-            from analyzer.experiment_analyzer_prototype import MichelsonInterferometerAnalyzer
-            
-            # 初始化分析器
-            analyzer = MichelsonInterferometerAnalyzer(work_dir=str(Path("work_temp")))
-            
-            if progress_callback:
-                await progress_callback("正在分析老师示范视频...", 40)
-            
-            # 分析老师视频
-            teacher_analysis = analyzer.analyze_video_steps(teacher_path, 'teacher', interval=30)
+            # 检查必需文件是否存在
+            if not os.path.exists('teacher.mp4'):
+                raise FileNotFoundError("teacher.mp4 文件不存在")
+            if not os.path.exists('student.mp4'):
+                raise FileNotFoundError("student.mp4 文件不存在")
             
             if progress_callback:
-                await progress_callback("正在分析学生实验视频...", 60)
+                progress_callback("分析老师示范视频...")
             
-            # 分析学生视频
-            student_analysis = analyzer.analyze_video_steps(student_path, 'student', interval=30)
+            # 1. 分析老师视频步骤
+            teacher_analysis = self.analyzer.analyze_video_steps('teacher.mp4', 'teacher', interval=30)
             
             if progress_callback:
-                await progress_callback("正在保存分析截图...", 80)
+                progress_callback("分析学生实验视频...")
             
-            # 保存截图
-            screenshots_dir = self.screenshots_dir / "step_analysis"
-            screenshots_dir.mkdir(exist_ok=True)
+            # 2. 分析学生视频步骤
+            student_analysis = self.analyzer.analyze_video_steps('student.mp4', 'student', interval=30)
             
-            screenshot_explanations = analyzer.save_step_screenshots(
-                teacher_analysis, student_analysis, str(screenshots_dir)
+            if progress_callback:
+                progress_callback("保存步骤截图和解释...")
+            
+            # 3. 保存截图和解释
+            screenshot_explanations = self.analyzer.save_simple_analysis_screenshots(
+                teacher_analysis, 
+                student_analysis, 
+                'step_analysis_output'
             )
             
-            # 生成报告
-            report = analyzer.generate_analysis_report(
-                teacher_analysis, student_analysis, screenshot_explanations
+            if progress_callback:
+                progress_callback("生成完整分析报告...")
+            
+            # 4. 生成完整的分析报告
+            analysis_report = self.analyzer.generate_simple_analysis_report(
+                teacher_analysis, 
+                student_analysis, 
+                screenshot_explanations,
+                'experiment_steps_analysis.json'
             )
             
-            return report
-            
-        except Exception as e:
-            print(f"实际分析器执行失败，使用模拟数据: {e}")
-            
-            # 如果实际分析器失败，返回模拟数据
-            if progress_callback:
-                await progress_callback("正在分析老师示范视频...", 40)
-                await asyncio.sleep(1)
+            # 检查是否有part文件，如果有则执行设备检测
+            has_part_files = any(os.path.exists(f'part{i}.png') for i in range(1, 7))
+            if has_part_files:
+                if progress_callback:
+                    progress_callback("执行设备检测...")
                 
-                await progress_callback("正在分析学生实验视频...", 60)
-                await asyncio.sleep(1)
+                # 5. 复制part文件到上传目录（如果还没有的话）
+                await self._copy_part_files()
                 
-                if include_device_detection:
-                    await progress_callback("正在执行设备检测...", 70)
-                    await asyncio.sleep(1)
+                # 6. 执行单帧设备检测（基于108秒）
+                from experiment_analyzer_prototype import extract_frame_at_time
+                
+                # 提取108秒的帧
+                target_frame = extract_frame_at_time('student.mp4', time_seconds=108.0, output_path='Identify_target.png')
+                
+                # 转换为RGB格式用于分析
+                import cv2
+                target_frame_rgb = cv2.cvtColor(target_frame, cv2.COLOR_BGR2RGB)
+                
+                # 执行设备检测
+                equipment_detections = self.analyzer.detect_equipment_in_frame(target_frame_rgb, min_confidence=0.25)
+                
+                if equipment_detections:
+                    # 在原图上绘制检测结果
+                    annotated_frame = self.analyzer.draw_detections_on_frame(target_frame_rgb, equipment_detections)
+                    
+                    # 保存标注后的图片
+                    annotated_bgr = cv2.cvtColor(annotated_frame, cv2.COLOR_RGB2BGR)
+                    cv2.imwrite('detection_result.png', annotated_bgr)
+                    
+                    # 生成设备检测报告
+                    detection_report = {
+                        'analysis_time': analysis_report.get('analysis_time'),
+                        'source_video': 'student.mp4',  
+                        'target_image': 'Identify_target.png',
+                        'total_components_to_detect': 7,
+                        'components_detected': len(equipment_detections),
+                        'detection_rate': len(equipment_detections) / 7,
+                        'detections': [
+                            {
+                                'name': det['name'],
+                                'confidence': det['confidence'],
+                                'bbox': det['bbox'],
+                                'method': det['method']
+                            }
+                            for det in equipment_detections
+                        ]
+                    }
+                    
+                    with open('detection_report.json', 'w', encoding='utf-8') as f:
+                        json.dump(detection_report, f, ensure_ascii=False, indent=2)
+                    
+                    # 将设备检测结果添加到主报告中
+                    analysis_report['equipment_detection'] = detection_report
+            
+            return analysis_report
+            
+        finally:
+            # 恢复原始工作目录
+            os.chdir(original_cwd)
+    
+    async def _copy_part_files(self):
+        """复制part文件到上传目录"""
+        # 检查是否需要从web目录复制part文件
+        web_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(self.upload_dir))), 'web')
         
-        # 返回模拟分析结果（作为备用）
+        for i in range(1, 8):  # part1.png to part7.png
+            part_file = f'part{i}.png'
+            upload_part_path = os.path.join(self.upload_dir, part_file)
+            web_part_path = os.path.join(web_dir, part_file)
+            
+            # 如果上传目录没有这个文件，但web目录有，则复制过来
+            if not os.path.exists(upload_part_path) and os.path.exists(web_part_path):
+                shutil.copy2(web_part_path, upload_part_path)
+                print(f"复制了 {part_file} 到上传目录")
+    
+    async def _move_results_to_static(self):
+        """移动生成的结果文件到静态文件目录"""
+        # 创建静态文件子目录
+        static_screenshots_dir = os.path.join(self.static_dir, 'screenshots')
+        static_reports_dir = os.path.join(self.static_dir, 'reports')
+        static_images_dir = os.path.join(self.static_dir, 'images')
+        
+        os.makedirs(static_screenshots_dir, exist_ok=True)
+        os.makedirs(static_reports_dir, exist_ok=True)  
+        os.makedirs(static_images_dir, exist_ok=True)
+        
+        # 1. 移动步骤分析截图
+        screenshots_dir = os.path.join(self.upload_dir, 'step_analysis_output')
+        if os.path.exists(screenshots_dir):
+            for filename in os.listdir(screenshots_dir):
+                if filename.endswith('.png'):
+                    src = os.path.join(screenshots_dir, filename)
+                    dst = os.path.join(static_screenshots_dir, filename)
+                    
+                    if os.path.exists(dst):
+                        os.remove(dst)
+                    shutil.move(src, dst)
+        
+        # 2. 移动JSON报告文件
+        report_files = [
+            'experiment_steps_analysis.json',
+            'detection_report.json',
+            'screenshot_explanations.json'
+        ]
+        
+        for report_file in report_files:
+            src_path = os.path.join(self.upload_dir, report_file)
+            if os.path.exists(src_path):
+                dst_path = os.path.join(static_reports_dir, report_file)
+                if os.path.exists(dst_path):
+                    os.remove(dst_path)
+                shutil.move(src_path, dst_path)
+        
+        # 3. 移动检测相关图片
+        image_files = [
+            'Identify_target.png',
+            'detection_result.png'
+        ]
+        
+        for image_file in image_files:
+            src_path = os.path.join(self.upload_dir, image_file)
+            if os.path.exists(src_path):
+                dst_path = os.path.join(static_images_dir, image_file)
+                if os.path.exists(dst_path):
+                    os.remove(dst_path)
+                shutil.move(src_path, dst_path)
+        
+        # 4. 移动screenshot_explanations.json（可能在step_analysis_output目录中）
+        screenshots_explanations_path = os.path.join(self.upload_dir, 'step_analysis_output', 'screenshot_explanations.json')
+        if os.path.exists(screenshots_explanations_path):
+            dst_path = os.path.join(static_reports_dir, 'screenshot_explanations.json')
+            if os.path.exists(dst_path):
+                os.remove(dst_path)
+            shutil.move(screenshots_explanations_path, dst_path)
+    
+    def _get_error_result(self, error_message: str) -> Dict[str, Any]:
+        """获取错误结果"""
         return {
-            "analysis_time": "2024-01-15 15:30:25",
-            "analysis_type": "实验步驤AI分析（老师示范 + 学生操作）",
-            "videos_analyzed": {
-                "teacher_video": "teacher.mp4",
-                "student_video": "student.mp4"
+            'analysis_time': '2024-01-01 12:00:00',
+            'analysis_type': '实验步骤AI分析（老师示范 + 学生操作）',
+            'videos_analyzed': {
+                'teacher_video': 'teacher.mp4',
+                'student_video': 'student.mp4'
             },
-            "teacher_analysis": {
-                "video_type": "老师示范",
-                "total_steps_identified": 6,
-                "analysis_summary": "LGS-7A精密干涉仪实验步驤 - 老师示范",
-                "steps": [
-                    {
-                        "step_id": 1,
-                        "step_name": "迈克尔逊干涉仪初始设置",
-                        "timestamp": 8,
-                        "time_str": "00:08",
-                        "description": [
-                            "安装氦氖激光器",
-                            "确保架间隙均匀",
-                            "准备光学元件"
-                        ],
-                        "formatted_output": "步驤1：迈克尔逊干涉仪初始设置 (t=8s)",
-                        "screenshot_filename": "teacher_step_01_t8s.png",
-                        "explanation": "老师在8秒时执行: 迈克尔逊干涉仪初始设置"
-                    },
-                    {
-                        "step_id": 2,
-                        "step_name": "激光器对准和调节",
-                        "timestamp": 25,
-                        "time_str": "00:25",
-                        "description": [
-                            "调节激光器位置",
-                            "调节光束通过分束器",
-                            "使光点重合"
-                        ],
-                        "formatted_output": "步驤2：激光器对准和调节 (t=25s)",
-                        "screenshot_filename": "teacher_step_02_t25s.png",
-                        "explanation": "老师在25秒时执行: 激光器对准和调节"
-                    }
-                ]
+            'teacher_analysis': {
+                'video_type': '老师示范',
+                'total_steps_identified': 0,
+                'analysis_summary': 'LGS-7A精密干涉仪实验步骤 - 老师示范',
+                'steps': []
             },
-            "student_analysis": {
-                "video_type": "学生操作",
-                "total_steps_identified": 4,
-                "analysis_summary": "LGS-7A精密干涉仪实验步驤 - 学生操作",
-                "steps": [
-                    {
-                        "step_id": 1,
-                        "step_name": "迈克尔逊干涉仪初始设置",
-                        "timestamp": 30,
-                        "time_str": "00:30",
-                        "description": [
-                            "准备和检查设备",
-                            "调整基础配置"
-                        ],
-                        "confidence": 0.75,
-                        "formatted_output": "步驤1：迈克尔逊干涉仪初始设置 (t=30s)",
-                        "screenshot_filename": "student_step_01_t30s.png",
-                        "explanation": "学生在30秒时执行: 迈克尔逊干涉仪初始设置"
-                    },
-                    {
-                        "step_id": 2,
-                        "step_name": "激光器对准和调节",
-                        "timestamp": 60,
-                        "time_str": "01:00",
-                        "description": [
-                            "调节激光器位置",
-                            "对准光路"
-                        ],
-                        "confidence": 0.68,
-                        "formatted_output": "步驤2：激光器对准和调节 (t=60s)",
-                        "screenshot_filename": "student_step_02_t60s.png",
-                        "explanation": "学生在60秒时执行: 激光器对准和调节"
-                    }
-                ]
+            'student_analysis': {
+                'video_type': '学生操作',
+                'total_steps_identified': 0,
+                'analysis_summary': 'LGS-7A精密干涉仪实验步骤 - 学生操作',
+                'steps': []
             },
-            "device_detection": {
-                "enabled": include_device_detection,
-                "detection_rate": 1.0 if include_device_detection else 0.0,
-                "components_detected": 7 if include_device_detection else 0
-            } if include_device_detection else None
+            'screenshot_explanations': {},
+            'error': f'分析过程中出现错误: {error_message}',
+            'success': False
         }
-    
-    async def _move_screenshots_to_static(self, work_dir: Path):
-        """移动截图到静态文件目录"""
-        # 查找所有截图文件
-        screenshot_patterns = ["*.png", "*.jpg", "*.jpeg"]
-        
-        for pattern in screenshot_patterns:
-            for screenshot_file in work_dir.glob(pattern):
-                target_path = self.screenshots_dir / screenshot_file.name
-                shutil.move(str(screenshot_file), str(target_path))
-    
-    def get_screenshot_url(self, filename: str) -> str:
-        """获取截图 URL"""
-        return f"/api/analysis/screenshots/{filename}"

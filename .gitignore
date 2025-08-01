@@ -5,3 +5,6 @@ web/step_analysis_output
 web/experiment_steps_analysis.json
 
 michelsen-web-analyzer/frontend/node_modules
+
+michelsen-web-analyzer/backend/uploads
+michelsen-web-analyzer/backend/static

@@ -7,7 +7,7 @@ from typing import Dict, Any, Optional
 import asyncio
 
 from core.config import settings
-from services.analyzer_service import ExperimentAnalysisService
+from services.analyzer_service import AnalyzerService
 from api.routers.upload import uploaded_files
 
 router = APIRouter()
@@ -52,24 +52,27 @@ async def start_analysis(background_tasks: BackgroundTasks, include_device_detec
 async def run_analysis(analysis_id: str, include_device_detection: bool):
     """异步执行分析任务"""
     try:
-        service = ExperimentAnalysisService()
+        # 初始化分析服务
+        service = AnalyzerService(
+            upload_dir=str(settings.upload_dir),
+            static_dir=str(settings.static_dir)
+        )
         
         # 获取上传的文件路径
         teacher_path = uploaded_files["teacher"]["filepath"]
         student_path = uploaded_files["student"]["filepath"]
         
         # 执行分析，传递进度回调
-        async def progress_callback(step: str, progress: int):
+        def progress_callback(step: str):
             analysis_status[analysis_id].update({
                 "current_step": step,
-                "progress": progress
+                "progress": min(analysis_status[analysis_id].get("progress", 0) + 10, 90)  # 渐进式进度
             })
         
-        # 调用分析服务
-        result = await service.analyze_experiment(
-            teacher_path=teacher_path,
-            student_path=student_path,
-            include_device_detection=include_device_detection,
+        # 调用新的分析服务
+        result = await service.analyze_videos(
+            teacher_video_path=teacher_path,
+            student_video_path=student_path,
             progress_callback=progress_callback
         )
         
@@ -82,6 +85,10 @@ async def run_analysis(analysis_id: str, include_device_detection: bool):
         })
         
     except Exception as e:
+        print(f"分析任务执行失败: {e}")
+        import traceback
+        traceback.print_exc()
+        
         analysis_status[analysis_id].update({
             "status": "error",
             "error": str(e),
@@ -107,7 +114,7 @@ async def get_analysis_results(analysis_id: str):
 @router.get("/screenshots/{filename}")
 async def get_screenshot(filename: str):
     """获取分析截图"""
-    screenshot_path = Path(settings.screenshots_dir) / filename
+    screenshot_path = Path(settings.static_dir) / "screenshots" / filename
     
     if not screenshot_path.exists():
         raise HTTPException(status_code=404, detail="截图文件不存在")
@@ -117,6 +124,34 @@ async def get_screenshot(filename: str):
         media_type="image/png",
         filename=filename
     )
+
+@router.get("/images/{filename}")
+async def get_image(filename: str):
+    """获取分析图片（如检测结果图）"""
+    image_path = Path(settings.static_dir) / "images" / filename
+    
+    if not image_path.exists():
+        raise HTTPException(status_code=404, detail="图片文件不存在")
+    
+    return FileResponse(
+        path=image_path,
+        media_type="image/png",
+        filename=filename
+    )
+
+@router.get("/reports/{filename}")
+async def get_report(filename: str):
+    """获取分析报告JSON文件"""
+    report_path = Path(settings.static_dir) / "reports" / filename
+    
+    if not report_path.exists():
+        raise HTTPException(status_code=404, detail="报告文件不存在")
+    
+    # 返回JSON内容而不是文件下载
+    with open(report_path, 'r', encoding='utf-8') as f:
+        report_data = json.load(f)
+    
+    return report_data
 
 @router.get("/list")
 async def list_analyses():

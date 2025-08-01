@@ -3,33 +3,31 @@
     <!-- 标题区域 -->
     <div class="text-center">
       <h1 class="text-4xl font-bold text-primary mb-4">
-        🔬 迈克尔逊干浉实验 AI 视频分析
+        🧪 迈克尔逊干涉实验 AI 分析系统
       </h1>
       <p class="text-lg text-base-content/70">
-        上传老师示范视频和学生实验视频，获得 AI 智能分析结果
+        上传实验视频，AI 智能分析实验步骤并生成详细报告
       </p>
     </div>
 
     <!-- 视频上传区域 -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- 老师视频上传 -->
-      <div class="upload-card">
+      <!-- 老师示范视频上传 -->
+      <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
-          <h2 class="card-title text-2xl mb-4">
+          <h2 class="card-title text-primary">
             👨‍🏫 老师示范视频
-            <div class="badge badge-primary">teacher.mp4</div>
           </h2>
           
-          <!-- 上传区域 -->
           <div class="form-control">
             <label class="label">
-              <span class="label-text">请选择老师示范视频文件</span>
+              <span class="label-text">选择老师示范视频文件</span>
             </label>
             <input 
               type="file" 
-              accept="video/mp4"
-              @change="handleTeacherUpload"
+              accept="video/*" 
               class="file-input file-input-bordered file-input-primary" 
+              @change="handleTeacherUpload"
             />
           </div>
           
@@ -55,24 +53,22 @@
         </div>
       </div>
 
-      <!-- 学生视频上传 -->
-      <div class="upload-card">
+      <!-- 学生实验视频上传 -->
+      <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
-          <h2 class="card-title text-2xl mb-4">
+          <h2 class="card-title text-secondary">
             🎓 学生实验视频
-            <div class="badge badge-secondary">student.mp4</div>
           </h2>
           
-          <!-- 上传区域 -->
           <div class="form-control">
             <label class="label">
-              <span class="label-text">请选择学生实验视频文件</span>
+              <span class="label-text">选择学生实验视频文件</span>
             </label>
             <input 
               type="file" 
-              accept="video/mp4"
-              @change="handleStudentUpload"
+              accept="video/*" 
               class="file-input file-input-bordered file-input-secondary" 
+              @change="handleStudentUpload"
             />
           </div>
           
@@ -125,7 +121,7 @@
             :class="{ 'btn-disabled': !canStartAnalysis, 'loading': isAnalyzing }"
             :disabled="!canStartAnalysis || isAnalyzing"
             @click="startAnalysis">
-            <span v-if="!isAnalyzing">🧠 开始 AI 实验步驤分析</span>
+            <span v-if="!isAnalyzing">🧠 开始 AI 实验步骤分析</span>
             <span v-else>正在分析中...</span>
           </button>
         </div>
@@ -200,31 +196,112 @@ const startAnalysis = async () => {
   currentAnalysisStep.value = '正在初始化分析...'
   
   try {
-    // TODO: 这里将调用后端 API 进行分析
-    // 模拟分析进度
-    const steps = [
-      '上传视频文件...',
-      '提取关键帧...',
-      'AI 分析老师示范步驤...',
-      'AI 分析学生操作步驤...',
-      '生成截图和解释...',
-      '分析完成!'
-    ]
+    // 步骤1: 上传老师视频
+    currentAnalysisStep.value = '上传老师示范视频...'
+    analysisProgress.value = 10
     
-    for (let i = 0; i < steps.length; i++) {
-      currentAnalysisStep.value = steps[i]
-      analysisProgress.value = ((i + 1) / steps.length) * 100
-      await new Promise(resolve => setTimeout(resolve, 1000)) // 模拟延迟
+    const teacherFormData = new FormData()
+    teacherFormData.append('file', teacherVideo.value!)
+    
+    const teacherResponse = await fetch('/api/upload/teacher', {
+      method: 'POST',
+      body: teacherFormData
+    })
+    
+    if (!teacherResponse.ok) {
+      throw new Error('老师视频上传失败')
     }
+    
+    // 步骤2: 上传学生视频
+    currentAnalysisStep.value = '上传学生实验视频...'
+    analysisProgress.value = 20
+    
+    const studentFormData = new FormData()
+    studentFormData.append('file', studentVideo.value!)
+    
+    const studentResponse = await fetch('/api/upload/student', {
+      method: 'POST',
+      body: studentFormData
+    })
+    
+    if (!studentResponse.ok) {
+      throw new Error('学生视频上传失败')
+    }
+    
+    // 步骤3: 开始AI分析
+    currentAnalysisStep.value = '启动AI分析引擎...'
+    analysisProgress.value = 30
+    
+    const analysisResponse = await fetch('/api/analysis/start', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        include_device_detection: includeDeviceDetection.value
+      })
+    })
+    
+    if (!analysisResponse.ok) {
+      throw new Error('AI分析启动失败')
+    }
+    
+    const analysisResult = await analysisResponse.json()
+    const analysisId = analysisResult.analysis_id
+    
+    // 步骤4: 轮询分析进度
+    currentAnalysisStep.value = 'AI正在分析实验步骤...'
+    
+    let completed = false
+    while (!completed) {
+      await new Promise(resolve => setTimeout(resolve, 2000)) // 每2秒检查一次
+      
+      const progressResponse = await fetch(`/api/analysis/progress/${analysisId}`)
+      if (!progressResponse.ok) {
+        throw new Error('无法获取分析进度')
+      }
+      
+      const progressData = await progressResponse.json()
+      
+      analysisProgress.value = Math.min(30 + progressData.progress * 0.7, 100)
+      currentAnalysisStep.value = progressData.current_step || 'AI正在分析中...'
+      
+      if (progressData.status === 'completed') {
+        completed = true
+        analysisProgress.value = 100
+        currentAnalysisStep.value = '分析完成！正在跳转到结果页面...'
+      } else if (progressData.status === 'error') {
+        throw new Error(progressData.error || '分析过程中出现错误')
+      }
+    }
+    
+    // 等待一下再跳转，让用户看到完成消息
+    await new Promise(resolve => setTimeout(resolve, 1000))
     
     // 跳转到结果页面
     router.push('/analysis')
     
   } catch (error) {
     console.error('分析失败:', error)
-    // TODO: 显示错误提示
+    alert(`AI分析失败: ${error.message}\n\n请检查：\n1. 后端服务是否正常运行\n2. 视频文件是否正确\n3. 网络连接是否稳定`)
+    analysisProgress.value = 0
+    currentAnalysisStep.value = ''
   } finally {
     isAnalyzing.value = false
   }
 }
 </script>
+
+<style scoped>
+.video-preview {
+  @apply border-2 border-dashed border-base-300 rounded-lg p-4;
+}
+
+.analysis-progress {
+  @apply w-full max-w-md mx-auto;
+}
+
+.btn.loading {
+  @apply opacity-70;
+}
+</style>
