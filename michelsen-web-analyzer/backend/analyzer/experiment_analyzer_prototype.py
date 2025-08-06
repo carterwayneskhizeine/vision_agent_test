@@ -34,7 +34,7 @@ class MichelsonInterferometerAnalyzer:
                 "start_time": 0,
                 "duration": 40,
                 "key_actions": ["安装氦氖激光器", "确保架间隙均匀", "准备光学元件"],
-                "required_equipment": ["氦氖激光器"],
+                "required_equipment": ["氦氖激光器", "动镜"],
                 "success_criteria": ["激光器正确安装", "框架水平稳定"]
             },
             {
@@ -51,7 +51,7 @@ class MichelsonInterferometerAnalyzer:
                 "name": "获得干涉条纹",
                 "start_time": 90,
                 "duration": 20,
-                "key_actions": ["加入扩束器", "调节动镜手钮", "获得干涉条纹"],
+                "key_actions": ["加入扩束器、分束器和补偿版", "调节动镜手钮", "获得干涉条纹"],
                 "required_equipment": ["扩束器", "动镜"],
                 "success_criteria": ["出现清晰干涉条纹", "条纹位于中心"]
             },
@@ -60,7 +60,7 @@ class MichelsonInterferometerAnalyzer:
                 "name": "观察等倾干涉图",
                 "start_time": 105,
                 "duration": 10,
-                "key_actions": ["转动精密测微头", "调节测微头", "观察圆形干涉环"],
+                "key_actions": ["调节动镜","转动精密测微头", "调节测微头", "观察圆形干涉环"],
                 "required_equipment": ["精密测微头"],
                 "success_criteria": ["出现圆形干涉环", "环心在屏中央"]
             },
@@ -69,8 +69,8 @@ class MichelsonInterferometerAnalyzer:
                 "name": "精密测量过程",
                 "start_time": 112,
                 "duration": 3,
-                "key_actions": ["记录测微头读数", "旋转测微螺旋", "计数干涉环变化"],
-                "required_equipment": ["精密测微头"],
+                "key_actions": ["调节动镜手扭","记录测微头读数", "旋转测微螺旋", "计数干涉环变化"],
+                "required_equipment": ["精密测微头", "二合一观察屏"],
                 "success_criteria": ["准确记录读数", "正确计数环数"]
             }
         ]
