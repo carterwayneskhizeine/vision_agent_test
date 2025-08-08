@@ -1,15 +1,8 @@
-# FastAPI 后端依赖
 fastapi>=0.104.1
 uvicorn[standard]>=0.24.0
 python-multipart>=0.0.6
-
-# HTTP 客户端
 httpx>=0.27.2
 requests>=2.31.0
-
-# 工具库
 pydantic>=2.5.2
 pydantic-settings>=2.1.0
-
-# 其他工具
 python-dateutil>=2.8.0
