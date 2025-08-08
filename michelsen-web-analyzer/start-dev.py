@@ -32,10 +32,30 @@ def run_frontend():
 def main():
     print("🎆 迈克尔逊干涉实验 AI 分析系统 - 开发环境")
     print("=" * 60)
-    print("🌐 前端地址: http://localhost:3000")
-    print("🔧 后端 API: http://localhost:8080")
-    print("📚 API 文档: http://localhost:8080/docs")
+    
+    # 获取服务器IP地址
+    try:
+        import sys
+        sys.path.append('.')
+        from get_server_ip import get_server_ip
+        local_ip = get_server_ip()
+        
+        if local_ip != "localhost":
+            print(f"🌐 本地访问: http://localhost:3000")
+            print(f"🌍 外网访问: http://{local_ip}:3000")
+            print(f"🔧 后端 API: http://{local_ip}:8080")
+            print(f"📚 API 文档: http://{local_ip}:8080/docs")
+        else:
+            print("🌐 前端地址: http://localhost:3000")
+            print("🔧 后端 API: http://localhost:8080") 
+            print("📚 API 文档: http://localhost:8080/docs")
+    except:
+        print("🌐 前端地址: http://localhost:3000")
+        print("🔧 后端 API: http://localhost:8080")
+        print("📚 API 文档: http://localhost:8080/docs")
+    
     print("🛑 停止服务: Ctrl+C")
+    print("💡 提示: 需要配置阿里云安全组开放3000和8080端口")
     print("=" * 60)
     
     # 检查必要的文件

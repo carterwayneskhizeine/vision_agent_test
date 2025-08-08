@@ -4,10 +4,10 @@
   "description": "迈克尔逊干涉实验 AI 分析前端",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "build-with-types": "vue-tsc && vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --host 0.0.0.0",
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
