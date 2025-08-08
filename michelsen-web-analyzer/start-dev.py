@@ -33,8 +33,8 @@ def main():
     print("🎆 迈克尔逊干涉实验 AI 分析系统 - 开发环境")
     print("=" * 60)
     print("🌐 前端地址: http://localhost:3000")
-    print("🔧 后端 API: http://localhost:8000")
-    print("📚 API 文档: http://localhost:8000/docs")
+    print("🔧 后端 API: http://localhost:8080")
+    print("📚 API 文档: http://localhost:8080/docs")
     print("🛑 停止服务: Ctrl+C")
     print("=" * 60)
     

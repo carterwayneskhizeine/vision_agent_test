@@ -71,8 +71,8 @@ ANTHROPIC_API_KEY=sk-ant-api03-你的完整密钥
 
 ### 4. 访问地址
 - 🌐 **前端应用**: http://localhost:3000
-- 🔧 **后端 API**: http://localhost:8000
-- 📚 **API 文档**: http://localhost:8000/docs
+- 🔧 **后端 API**: http://localhost:8080
+- 📚 **API 文档**: http://localhost:8080/docs
 
 ## 📝 项目结构
 
@@ -164,7 +164,7 @@ michelsen-web-analyzer/
    ```bash
    # 生产模式启动
    cd backend
-   uvicorn main:app --host 0.0.0.0 --port 8000
+   uvicorn main:app --host 0.0.0.0 --port 8080
    ```
 
 ### Docker 部署（可选）
@@ -194,4 +194,4 @@ michelsen-web-analyzer/
 如遇到问题，可以：
 1. 查看项目 README.md
 2. 检查控制台错误日志
-3. 参考 API 文档: http://localhost:8000/docs
+3. 参考 API 文档: http://localhost:8080/docs

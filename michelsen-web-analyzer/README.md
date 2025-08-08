@@ -34,8 +34,8 @@ python start-dev.py
 
 启动后访问：
 - 🌐 **前端界面**: http://localhost:3000 （或 http://localhost:3001）
-- 🔧 **后端API**: http://localhost:8000  
-- 📚 **API文档**: http://localhost:8000/docs
+- 🔧 **后端API**: http://localhost:8080  
+- 📚 **API文档**: http://localhost:8080/docs
 
 ### 方式二：分别启动（开发调试用）
 
@@ -136,7 +136,7 @@ ANTHROPIC_API_KEY=sk-ant-api03-你的完整密钥
 A: 推荐使用**方式一**（`python start-dev.py`），一个命令就能启动前后端，简单方便。
 
 **Q: 如果端口被占用怎么办？**  
-A: 前端会自动尝试下一个端口（3001, 3002...），后端固定使用8000端口。
+A: 前端会自动尝试下一个端口（3001, 3002...），后端固定使用8080端口。
 
 **Q: 分析需要多长时间？**  
 A: 一般1-2分钟，取决于视频长度和计算机性能。分析过程中可以在终端看到进度。

@@ -41,8 +41,8 @@ def main():
     for directory in ["uploads", "static", "static/screenshots", "static/videos"]:
         Path(directory).mkdir(parents=True, exist_ok=True)
     
-    print(f"🌐 正在启动服务器: http://localhost:8000")
-    print(f"📚 API 文档: http://localhost:8000/docs")
+    print(f"🌐 正在启动服务器: http://localhost:8080")
+    print(f"📚 API 文档: http://localhost:8080/docs")
     print(f"⚙️  开发模式: 已启用热重载")
     print(f"🛑 停止服务: Ctrl+C")
     print("-" * 50)
@@ -53,7 +53,7 @@ def main():
             sys.executable, "-m", "uvicorn", 
             "main:app", 
             "--host", "0.0.0.0", 
-            "--port", "8000", 
+            "--port", "8080", 
             "--reload",
             "--log-level", "info"
         ])

@@ -434,9 +434,9 @@ const loadAnalysisResults = async () => {
         
         // 检查设备检测图片是否存在
         try {
-          const imageResponse = await fetch('http://localhost:8000/static/images/detection_result.png', { method: 'HEAD' })
+                          const imageResponse = await fetch('http://localhost:8080/static/images/detection_result.png', { method: 'HEAD' })
           if (imageResponse.ok) {
-            detectionImageUrl.value = 'http://localhost:8000/static/images/detection_result.png'
+                              detectionImageUrl.value = 'http://localhost:8080/static/images/detection_result.png'
           }
         } catch (imageError) {
           console.log('设备检测图片不存在')

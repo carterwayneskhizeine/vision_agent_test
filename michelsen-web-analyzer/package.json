@@ -1,0 +1,30 @@
+{
+  "name": "michelsen-analyzer",
+  "version": "1.0.0",
+  "description": "迈克尔逊干涉实验 AI 分析系统",
+  "main": "backend/main.py",
+  "scripts": {
+    "dev": "python start-dev.py",
+    "start": "python start-backend.py",
+    "build": "python build-package.py all",
+    "build:frontend": "cd frontend && npm run build",
+    "build:dev": "python build-package.py dev", 
+    "build:prod": "python build-package.py prod",
+    "build:exe": "python build-executable.py",
+    "clean": "python build-package.py clean",
+    "install": "cd frontend && npm install && cd .. && pip install -r backend/requirements.txt"
+  },
+  "keywords": [
+    "michelson", 
+    "interferometer", 
+    "ai", 
+    "analysis", 
+    "education"
+  ],
+  "author": "AI Analysis Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/michelsen-analyzer"
+  }
+}
