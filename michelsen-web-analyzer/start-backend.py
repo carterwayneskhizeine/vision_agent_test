@@ -10,6 +10,10 @@ import sys
 import subprocess
 from pathlib import Path
 
+# 设置无头环境变量（用于Linux服务器）
+os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
+os.environ.setdefault('OPENCV_IO_ENABLE_OPENEXR', '0')
+
 def main():
     print("🚀 启动迈克尔逊干涉实验 AI 分析后端服务...")
     
