@@ -34,7 +34,42 @@ python start-backend.py
 node start-frontend.js
 ```
 
-### 3. 访问地址
+### 3. 环境变量配置
+
+#### API 密钥设置
+本项目后端需要配置 `ANTHROPIC_API_KEY` 环境变量。请使用您自己的密钥，切勿将真实密钥提交到仓库。
+
+**Windows 设置方式**：
+- 图形界面（系统变量）：
+  1. 打开"控制面板 → 系统和安全 → 系统"或"设置 → 系统 → 关于"
+  2. 点击"高级系统设置 → 环境变量"
+  3. 在"系统变量"中点击"新建"，名称填写 `ANTHROPIC_API_KEY`，值填写您的密钥（例如 `sk-ant-api03-...`）
+  4. 确定保存，关闭窗口，重新打开终端
+
+- 命令行（PowerShell）：
+  ```powershell
+  setx ANTHROPIC_API_KEY "sk-ant-api03-你的完整密钥" /M
+  ```
+
+**Ubuntu 设置方式**：
+- 临时（当前会话）：
+  ```bash
+  export ANTHROPIC_API_KEY="sk-ant-api03-你的完整密钥"
+  ```
+- 永久（追加到 Shell 启动文件）：
+  ```bash
+  echo 'export ANTHROPIC_API_KEY="sk-ant-api03-你的完整密钥"' >> ~/.bashrc && source ~/.bashrc
+  # 或 Zsh 用户：
+  echo 'export ANTHROPIC_API_KEY="sk-ant-api03-你的完整密钥"' >> ~/.zshrc && source ~/.zshrc
+  ```
+
+**使用 `.env` 文件（推荐用于开发）**：
+在后端目录 `backend/` 下创建 `.env` 文件：
+```
+ANTHROPIC_API_KEY=sk-ant-api03-你的完整密钥
+```
+
+### 4. 访问地址
 - 🌐 **前端应用**: http://localhost:3000
 - 🔧 **后端 API**: http://localhost:8000
 - 📚 **API 文档**: http://localhost:8000/docs

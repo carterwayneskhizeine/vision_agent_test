@@ -51,6 +51,42 @@ cd michelsen-web-analyzer/frontend
 npm run dev
 ```
 
+## 🔐 环境变量与 API 密钥
+
+本项目后端可从环境变量或 `.env` 文件读取外部 API 密钥（如 `ANTHROPIC_API_KEY`）。请使用您自己的密钥，切勿将真实密钥提交到仓库。
+
+### Windows 设置方式
+- **图形界面（系统变量）**：
+  1. 打开"控制面板 → 系统和安全 → 系统"或"设置 → 系统 → 关于"
+  2. 点击"高级系统设置 → 环境变量"
+  3. 在"系统变量"中点击"新建"，名称填写 `ANTHROPIC_API_KEY`，值填写您的密钥（例如 `sk-ant-api03-...`）
+  4. 确定保存，关闭窗口，重新打开终端
+
+- **命令行（PowerShell）**：
+  ```powershell
+  setx ANTHROPIC_API_KEY "sk-ant-api03-你的完整密钥" /M
+  ```
+  注意：需要重新打开一个新终端后生效。
+
+### Ubuntu 设置方式
+- **临时（当前会话）**：
+  ```bash
+  export ANTHROPIC_API_KEY="sk-ant-api03-你的完整密钥"
+  ```
+- **永久（追加到 Shell 启动文件）**：
+  ```bash
+  echo 'export ANTHROPIC_API_KEY="sk-ant-api03-你的完整密钥"' >> ~/.bashrc && source ~/.bashrc
+  # 或 Zsh 用户：
+  echo 'export ANTHROPIC_API_KEY="sk-ant-api03-你的完整密钥"' >> ~/.zshrc && source ~/.zshrc
+  ```
+
+### 使用 `.env` 文件（推荐用于本地开发）
+在后端目录 `michelsen-web-analyzer/backend/` 下创建 `.env` 文件，内容示例：
+```
+ANTHROPIC_API_KEY=sk-ant-api03-你的完整密钥
+```
+后端基于配置会自动读取 `.env`。
+
 ## 📋 使用步骤
 
 1. **启动服务**：使用上面的方式一或方式二启动前后端

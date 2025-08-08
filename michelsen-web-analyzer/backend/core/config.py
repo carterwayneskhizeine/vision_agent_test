@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List, Optional
 
 class Settings(BaseSettings):
     # 应用配置
@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     # AI 分析配置
     analysis_timeout: int = 300  # 5分钟
     default_frame_interval: int = 30  # 30秒
+    
+    # 外部 API 配置
+    anthropic_api_key: Optional[str] = None
     
     class Config:
         env_file = ".env"
