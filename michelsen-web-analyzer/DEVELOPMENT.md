@@ -11,6 +11,8 @@ pip install -r requirements.txt
 ```
 
 #### 前端依赖
+在安装前端依赖之前，请确保已安装 Node.js（推荐 LTS 版本）。可从官方中文页面下载：
+https://nodejs.org/zh-cn
 ```bash
 cd frontend
 npm install

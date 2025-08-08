@@ -19,6 +19,9 @@ michelsen-web-analyzer/
 # 进入项目根目录
 cd michelsen-web-analyzer
 
+# 如果未安装 Node.js，请先从官方中文页面安装（推荐 LTS 版本）：
+# https://nodejs.org/zh-cn
+
 # 安装前端依赖（首次运行需要）
 cd frontend && npm install && cd ..
 
