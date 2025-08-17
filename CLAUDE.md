@@ -1,147 +1,198 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+该文件为 Claude Code (claude.ai/code) 在此代码库中工作时提供指导。
 
-## Project Overview
+## 项目概述
 
-This repository contains two main projects for AI-powered analysis of Michelson interferometer physics experiments:
+此代码库包含两个用于迈克尔逊干涉仪物理实验AI分析的主要项目：
 
-1. **michelsen-web-analyzer/**: Full-stack web application (FastAPI + Vue 3) for video analysis via web interface
-2. **web/**: Standalone Python prototype for command-line video analysis and equipment detection
+1. **michelsen-web-analyzer/**: 全栈Web应用程序 (FastAPI + Vue 3)，通过Web界面进行视频分析
+2. **web/**: 独立的Python原型，用于命令行视频分析和设备检测
 
-## Development Commands
+## 开发命令
 
-### Web Application (michelsen-web-analyzer/)
+### Web应用程序 (michelsen-web-analyzer/)
 
-**One-click development startup (recommended):**
+**一键开发启动（推荐）:**
 ```bash
 cd michelsen-web-analyzer
 python start-dev.py
 ```
 
-**Manual startup:**
+**手动启动:**
 ```bash
-# Backend only
+# 仅后端
 python start-backend.py
 
-# Frontend only (separate terminal)
+# 仅前端（单独终端）
 node start-frontend.js
 ```
 
-**Package building:**
+**包构建:**
 ```bash
-# Build all packages
+# 构建所有包
 npm run build
 python build-package.py all
 
-# Build specific packages
-python build-package.py prod    # Production package
-python build-package.py dev     # Development package
-python build-executable.py     # Standalone executable
+# 构建特定包
+python build-package.py prod    # 生产包
+python build-package.py dev     # 开发包
+python build-executable.py     # 独立可执行文件
 ```
 
-**Frontend development:**
+**前端开发:**
 ```bash
 cd frontend
 npm install
-npm run dev                     # Development server
-npm run build                   # Production build
-npm run type-check             # TypeScript checking
+npm run dev                     # 开发服务器
+npm run build                   # 生产构建
+npm run type-check             # TypeScript检查
 ```
 
-**Backend development:**
+**后端开发:**
 ```bash
 cd backend
 pip install -r requirements.txt
-python main.py                 # Start FastAPI server
+python main.py                 # 启动FastAPI服务器
 ```
 
-### Standalone Prototype (web/)
+### 独立原型 (web/)
 
-**Quick analysis modes:**
+**快速分析模式:**
 ```bash
 cd web
-python experiment_analyzer_prototype.py    # Smart analysis (auto-detects files)
-python student_operation_analysis.py       # Student operation analysis
-python quick_detection.py                  # Equipment detection only
-python test_analyzer.py                    # Test with sample data
+python experiment_analyzer_prototype.py    # 智能分析（自动检测文件）
+python student_operation_analysis.py       # 学生操作分析
+python quick_detection.py                  # 仅设备检测
+python test_analyzer.py                    # 使用示例数据测试
 ```
 
-## Architecture
+## 架构
 
-### Web Application Architecture
+### Web应用程序架构
 
-**Backend (FastAPI):**
-- `backend/main.py`: FastAPI application entry point with CORS and static file serving
-- `backend/api/routers/`: REST API endpoints for upload and analysis
-- `backend/services/`: Business logic for video analysis and AI processing
-- `backend/analyzer/`: Core AI analysis engine (same as standalone prototype)
-- `backend/core/config.py`: Application configuration and settings
+**后端 (FastAPI):**
+- `backend/main.py`: FastAPI应用程序入口点，包含CORS和静态文件服务
+- `backend/api/routers/`: 上传和分析的REST API端点
+- `backend/services/`: 视频分析和AI处理的业务逻辑
+- `backend/analyzer/`: 核心AI分析引擎（与独立原型相同）
+- `backend/core/config.py`: 应用程序配置和设置
 
-**Frontend (Vue 3 + Vite):**
-- `frontend/src/main.ts`: Vue 3 application bootstrap with Pinia and Vue Router
-- `frontend/src/views/`: Page components (Home, Analysis)
-- `frontend/src/api/`: HTTP client for backend communication
-- `frontend/src/types/`: TypeScript type definitions
-- Uses DaisyUI + Tailwind CSS for responsive UI components
+**前端 (Vue 3 + Vite):**
+- `frontend/src/main.ts`: Vue 3应用程序引导，包含Pinia和Vue Router
+- `frontend/src/views/`: 页面组件（Home、Analysis）
+- `frontend/src/api/`: 与后端通信的HTTP客户端
+- `frontend/src/types/`: TypeScript类型定义
+- 使用DaisyUI + Tailwind CSS实现响应式UI组件
 
-### AI Analysis Engine
+### AI分析引擎
 
-Both projects share the same core analysis engine (`MichelsonInterferometerAnalyzer` class):
+两个项目共享相同的核心分析引擎（`MichelsonInterferometerAnalyzer`类）：
 
-**Key capabilities:**
-- Video frame extraction and analysis at predefined time points
-- Equipment detection using OpenCV and SIFT/ORB feature matching
-- Experiment step identification (6 standard steps: setup, laser alignment, interference patterns, measurement, etc.)
-- Comparative analysis between teacher demonstration and student videos
-- Visual report generation with annotated screenshots
+**主要功能:**
+- 在预定义时间点提取和分析视频帧
+- 使用OpenCV和SIFT/ORB特征匹配进行设备检测
+- 实验步骤识别（6个标准步骤：设置、激光对准、干涉图样、测量等）
+- 教师示范和学生视频之间的比较分析
+- 带注释截图的可视化报告生成
 
-**Detection targets:**
-- 7 types of physics equipment: HeNe laser, beam splitter, mirrors, precision micrometer, beam expander, observation screen
-- 6 experiment steps with timing validation and accuracy scoring
+**检测目标:**
+- 7种物理设备：氦氖激光器、分束器、反射镜、精密测微头、扩束器、观察屏
+- 6个实验步骤，包含时间验证和准确性评分
 
-### File Organization
+### 文件组织
 
-**Analysis outputs:**
-- `backend/static/screenshots/`: Generated analysis screenshots
-- `backend/uploads/`: Uploaded video files
-- `web/analysis_output/`: Standalone prototype outputs
-- `web/real_video_analysis/`: Real video analysis with equipment detection boxes
+**分析输出:**
+- `backend/static/screenshots/`: 生成的分析截图
+- `backend/uploads/`: 上传的视频文件
+- `web/analysis_output/`: 独立原型输出
+- `web/real_video_analysis/`: 带设备检测框的真实视频分析
 
-## Environment Setup
+## 环境设置
 
-**Required API keys:**
+**必需的API密钥:**
 ```bash
-# Set ANTHROPIC_API_KEY environment variable
+# 设置ANTHROPIC_API_KEY环境变量
 export ANTHROPIC_API_KEY="sk-ant-api03-your-key"
 
-# Or create .env file in backend/ directory
+# 或在backend/目录下创建.env文件
 echo "ANTHROPIC_API_KEY=sk-ant-api03-your-key" > backend/.env
 ```
 
-**Dependencies:**
-- Python 3.8+ with OpenCV, NumPy, Matplotlib, FastAPI, Uvicorn
-- Node.js 16+ for frontend development
-- vision-agent package for enhanced AI capabilities
+**依赖项:**
+- Python 3.8+，包含OpenCV、NumPy、Matplotlib、FastAPI、Uvicorn
+- Node.js 16+用于前端开发
+- vision-agent包用于增强AI功能
 
-## Access Points
+## 生产部署配置
 
-**Web application:**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8080
-- API documentation: http://localhost:8080/docs
+### 服务器部署（已配置完成）
 
-**Analysis workflow:**
-1. Upload teacher demonstration video (teacher.mp4)
-2. Upload student experiment video (student.mp4)
-3. Trigger AI analysis via web interface
-4. View results with annotated screenshots and comparative analysis
+**systemd服务管理:**
+```bash
+# 查看服务状态
+systemctl status michelsen_dev.service
 
-## Key Implementation Notes
+# 查看实时日志
+journalctl -u michelsen_dev.service -f
 
-- Backend uses thread-based execution for video analysis to prevent blocking
-- Frontend implements real-time progress tracking via API polling
-- Equipment detection uses template matching with multiple scale levels for robustness
-- Chinese language support is configured in matplotlib for report generation
-- CORS is configured to allow frontend-backend communication during development
-- File uploads are limited to 50MB with MP4/AVI/MOV format support
+# 重启服务
+systemctl restart michelsen_dev.service
+```
+
+**Nginx反向代理:**
+- 域名: https://lab-score.fantasy-lab.com/
+- 前端代理: http://127.0.0.1:3000 (Vite开发服务器)
+- 后端API代理: http://127.0.0.1:8080/api/
+
+**Vite配置要点:**
+- `allowedHosts`中必须包含部署域名
+- `host: '0.0.0.0'`以支持外部访问
+- API代理配置指向本地8080端口
+
+**环境变量配置:**
+- 位置: `/etc/systemd/system/michelsen_analyzer.env`
+- 包含ANTHROPIC_API_KEY和其他必要环境变量
+- 权限设置为600以确保安全
+
+## 访问入口
+
+**Web应用程序:**
+- 生产环境: https://lab-score.fantasy-lab.com/
+- 开发环境前端: http://localhost:3000
+- 后端API: http://localhost:8080
+- API文档: http://localhost:8080/docs
+
+**分析工作流程:**
+1. 上传教师示范视频 (teacher.mp4)
+2. 上传学生实验视频 (student.mp4)
+3. 通过Web界面触发AI分析
+4. 查看带注释截图和比较分析的结果
+
+## 关键实现要点
+
+- 后端使用基于线程的执行进行视频分析以防止阻塞
+- 前端通过API轮询实现实时进度跟踪
+- 设备检测使用多尺度级别的模板匹配以增强鲁棒性
+- 在matplotlib中配置中文语言支持用于报告生成
+- 配置CORS以支持开发期间的前后端通信
+- 文件上传限制为50MB，支持MP4/AVI/MOV格式
+
+## 故障排除
+
+**常见问题:**
+- 服务启动失败：检查Node.js路径是否在systemd PATH中
+- 域名访问403错误：检查Vite配置中的allowedHosts
+- API密钥错误：验证环境变量文件配置和加载
+
+**日志查看:**
+```bash
+# 实时日志
+journalctl -u michelsen_dev.service -f
+
+# 错误日志
+journalctl -u michelsen_dev.service -p err
+
+# 最近日志
+journalctl -u michelsen_dev.service -n 100
+```
