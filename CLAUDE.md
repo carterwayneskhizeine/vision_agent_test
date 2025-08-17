@@ -131,24 +131,35 @@ echo "ANTHROPIC_API_KEY=sk-ant-api03-your-key" > backend/.env
 **systemd服务管理:**
 ```bash
 # 查看服务状态
-systemctl status michelsen_dev.service
+systemctl status michelsen_analyzer.service
 
 # 查看实时日志
-journalctl -u michelsen_dev.service -f
+journalctl -u michelsen_analyzer.service -f
 
 # 重启服务
-systemctl restart michelsen_dev.service
+systemctl restart michelsen_analyzer.service
 ```
 
-**Nginx反向代理:**
-- 域名: https://lab-score.fantasy-lab.com/
-- 前端代理: http://127.0.0.1:3000 (Vite开发服务器)
-- 后端API代理: http://127.0.0.1:8080/api/
+**部署架构:**
+- **后端服务**: FastAPI (端口8080) 托管API和前端静态文件
+- **Nginx代理**: 处理HTTPS、SSL证书和请求转发
+- **域名**: https://lab-score.fantasy-lab.com/
+- **架构优势**: 前后端统一域名，无跨域问题
 
-**Vite配置要点:**
-- `allowedHosts`中必须包含部署域名
-- `host: '0.0.0.0'`以支持外部访问
-- API代理配置指向本地8080端口
+**Nginx配置要点:**
+```nginx
+# API请求代理到后端
+location /api/ {
+    proxy_pass http://127.0.0.1:8080/api/;
+    # ... 其他代理设置
+}
+
+# 前端静态文件代理到后端（后端托管dist）
+location / {
+    proxy_pass http://127.0.0.1:8080/;
+    # ... 其他代理设置
+}
+```
 
 **环境变量配置:**
 - 位置: `/etc/systemd/system/michelsen_analyzer.env`
@@ -178,21 +189,105 @@ systemctl restart michelsen_dev.service
 - 配置CORS以支持开发期间的前后端通信
 - 文件上传限制为50MB，支持MP4/AVI/MOV格式
 
+## 前端更新部署流程
+
+### 本地开发环境更新
+
+**方法1: 直接替换dist文件夹（推荐）**
+```bash
+# 备份当前dist
+cd michelsen-web-analyzer/frontend
+mv dist dist_backup_$(date +%Y%m%d_%H%M%S)
+
+# 复制新的dist文件夹
+cp -r /path/to/new/dist .
+
+# 修复可能的硬编码HTTP URL
+sed -i 's|http://lab-score.fantasy-lab.com/api|/api|g' dist/assets/*.js
+
+# 启动后端测试
+cd ../backend
+python main.py
+# 访问 http://localhost:8080
+```
+
+**方法2: 源码重构建**
+```bash
+cd michelsen-web-analyzer/frontend
+npm run build
+```
+
+### 阿里云服务器更新
+
+**完整更新流程:**
+```bash
+# 1. 本地提交更改
+git add .
+git commit -m "更新前端界面"
+git push origin main
+
+# 2. 服务器拉取更新
+ssh your_server
+cd /root/Code/vision_agent_test
+git stash  # 保存本地更改
+git pull origin main
+git stash pop  # 恢复本地更改（如果需要）
+
+# 3. 修复Mixed Content问题（如果新dist包含硬编码HTTP URL）
+sed -i 's|http://lab-score.fantasy-lab.com/api|/api|g' michelsen-web-analyzer/frontend/dist/assets/*.js
+
+# 4. 重启服务
+systemctl restart michelsen_analyzer.service
+
+# 5. 验证部署
+curl -I https://lab-score.fantasy-lab.com/
+curl -s https://lab-score.fantasy-lab.com/ | grep -i "迈克尔逊"
+```
+
+### 服务冲突解决
+
+**停止冲突的服务:**
+```bash
+# 停止老的开发服务（如果存在）
+systemctl stop michelsen_dev.service
+systemctl disable michelsen_dev.service
+
+# 确保只有生产服务运行
+systemctl status michelsen_analyzer.service
+ss -tulpn | grep :8080
+```
+
 ## 故障排除
 
 **常见问题:**
-- 服务启动失败：检查Node.js路径是否在systemd PATH中
-- 域名访问403错误：检查Vite配置中的allowedHosts
-- API密钥错误：验证环境变量文件配置和加载
+- **502错误**: 检查Nginx配置和后端服务状态
+- **Mixed Content错误**: 前端使用HTTP请求HTTPS页面，需修复API URL
+- **服务端口冲突**: 确保只有一个服务占用8080端口
+- **API 404错误**: 检查路由注册和配置文件
 
 **日志查看:**
 ```bash
 # 实时日志
-journalctl -u michelsen_dev.service -f
+journalctl -u michelsen_analyzer.service -f
 
 # 错误日志
-journalctl -u michelsen_dev.service -p err
+journalctl -u michelsen_analyzer.service -p err
 
 # 最近日志
-journalctl -u michelsen_dev.service -n 100
+journalctl -u michelsen_analyzer.service -n 100
+
+# Nginx错误日志
+tail -f /www/wwwlogs/lab-score.fantasy-lab.com.error.log
+```
+
+**API测试:**
+```bash
+# 测试后端健康
+curl http://127.0.0.1:8080/health
+
+# 测试前端访问
+curl -I https://lab-score.fantasy-lab.com/
+
+# 测试API端点
+curl -X POST http://127.0.0.1:8080/api/upload/teacher -F "file=@test.mp4"
 ```
