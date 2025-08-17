@@ -13,6 +13,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // 支持外网访问
     port: 3000,
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      'lab-score.fantasy-lab.com',
+      '.fantasy-lab.com'
+    ],
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
