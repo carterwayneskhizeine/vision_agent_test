@@ -11,3 +11,7 @@ michelsen-web-analyzer/backend/static
 
 new8080/frontend/node_modules
 
+michelsen-web-analyzer/frontend/package-lock.json
+
+__pycache__
+*.py[cod]

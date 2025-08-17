@@ -1,0 +1,19 @@
+[Unit]
+Description=Michelson Analyzer Backend Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/Code/vision_agent_test/michelsen-web-analyzer/backend
+Environment=PATH=/root/miniconda3/envs/va/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/etc/systemd/system/michelsen_analyzer.env
+ExecStart=/root/miniconda3/envs/va/bin/python main.py
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
