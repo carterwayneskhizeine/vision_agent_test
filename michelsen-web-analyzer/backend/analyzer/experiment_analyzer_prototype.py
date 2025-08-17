@@ -18,7 +18,7 @@ from PIL import Image, ImageDraw, ImageFont
 from typing import List, Dict, Any, Optional, Tuple
 
 # 设置matplotlib支持中文
-plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'DejaVu Sans']
+plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'WenQuanYi Micro Hei', 'WenQuanYi Zen Hei', 'Noto Sans CJK SC', 'SimHei', 'DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
 
 class MichelsonInterferometerAnalyzer:
@@ -159,11 +159,15 @@ class MichelsonInterferometerAnalyzer:
 
         # 尝试多种字体路径
         font_paths = [
+            "/usr/share/fonts/truetype/windows/msyh.ttc",  # Microsoft YaHei (Linux)
+            "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",  # WenQuanYi Micro Hei
+            "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",  # WenQuanYi Zen Hei
+            "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",  # Noto Sans CJK
             "C:/Windows/Fonts/simhei.ttf",  # Windows SimHei
             "C:/Windows/Fonts/msyh.ttf",    # Windows Microsoft YaHei
             "C:/Windows/Fonts/simsun.ttc",  # Windows SimSun
             "/System/Library/Fonts/PingFang.ttc",  # macOS
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"  # Linux
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"  # Linux fallback
         ]
         
         font = None
