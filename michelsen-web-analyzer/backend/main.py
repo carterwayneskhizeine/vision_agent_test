@@ -43,7 +43,12 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
 app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
 
-@app.get("/")
+# 前端静态文件服务 - 放在最后，避免与API路由冲突
+frontend_dist_path = Path(__file__).parent.parent / "frontend" / "dist"
+if frontend_dist_path.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_dist_path), html=True), name="frontend")
+
+@app.get("/api")
 async def root():
     return {
         "message": "迈克尔逊干涉实验 AI 分析系统 API",
